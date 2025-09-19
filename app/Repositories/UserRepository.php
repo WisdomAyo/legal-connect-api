@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repositories;
 
 use App\Models\User;
@@ -11,31 +12,19 @@ class UserRepository
     public function createUser(array $data): User
     {
 
+        $user = User::create($data);
 
-        return User::create([
-            'first_name' => $data['first_name'],
-            'last_name' => $data['last_name'],
-            'email' => $data['email'],
-            'phone_number' => $data['phone_number'],
-            'country_id' => $data['country_id'] ?? null,
-            'state_id' => $data['state_id'] ?? null,
-            'city_id' => $data['city_id'] ?? null,
-            'password' => $data['password'],
-            'profile_picture' => $data['profile_picture'] ?? null,
-            'last_seen_at' => now(),
-        ]);
+        return $user->load('city.state.country', 'lawyerProfile');
     }
-
 
     public function findByEmail(string $email): ?User
     {
-        return User::where('email', $email)->first();
+        return User::with('city.state.country', 'lawyerProfile')
+            ->where('email', $email)
+            ->first();
     }
 
-
-
-
-     public function findOrCreateFromSocial(SocialiteUser $socialUser): User
+    public function findOrCreateFromSocial(SocialiteUser $socialUser): User
     {
         $user = User::updateOrCreate(
             ['email' => $socialUser->getEmail()],
@@ -48,13 +37,12 @@ class UserRepository
             ]
         );
 
-       return $user;
+        return $user;
     }
 
     public function updatePassword(User $user, string $password): void
     {
         $user->password = Hash::make($password);
         $user->save();
-}
-
+    }
 }

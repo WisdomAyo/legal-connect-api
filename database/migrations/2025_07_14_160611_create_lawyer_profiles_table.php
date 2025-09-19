@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('lawyer_profiles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('nba_enrollment_number')->unique()->comment('Bar number');
-            $table->string('year_of_call');
+            $table->string('nba_enrollment_number')->unique()->nullable()->comment('Bar number');
+            $table->string('year_of_call')->nullable();
             $table->string('law_school')->nullable();
             $table->year('graduation_year')->nullable();
             $table->text('bio')->nullable()->comment('Professional bio');
@@ -30,7 +30,9 @@ return new class extends Migration
                 'pending_onboarding', // Initial state after signup
                 'pending_review',     // After lawyer submits the onboarding form
                 'verified',           // Approved by admin
-                'rejected'            // Rejected by admin
+                'rejected',            // Rejected by admin
+                'in_progress' ,         // In Progress with onboarding
+                'suspended'           // Suspended by admin
             ])->default('pending_onboarding');
             $table->timestamp('verified_at')->nullable();
 

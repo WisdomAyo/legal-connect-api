@@ -1,24 +1,20 @@
 <?php
+
 namespace App\Repositories;
 
-use App\Models\User;
 use App\Models\LawyerProfile;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
+use App\Models\User;
 
 class LawyerRepository
 {
     public function createInitialProfile(User $user, array $data): LawyerProfile
     {
         return $user->lawyerProfile()->create([
-             'nba_enrollment_number' => $data['nba_enrollment_number'],
-             'year_of_call' => $data['year_of_call'],
-            'status' => 'pending_onboarding', 
+            'status' => 'pending_onboarding',
         ]);
     }
 
-     public function updateOnboardingData(User $user, array $updates): LawyerProfile
+    public function updateOnboardingData(User $user, array $updates): LawyerProfile
     {
         $profile = $user->lawyerProfile;
 

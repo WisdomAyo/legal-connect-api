@@ -2,30 +2,35 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use App\Events\OnboardingCompleted;
+use App\Events\OnboardingStepCompleted;
 use App\Events\UserRegistered;
 use App\Listeners\SendEmailVerificationNotification;
+use Illuminate\Support\ServiceProvider;
 use SocialiteProviders\Manager\SocialiteWasCalled;
 
 class EventServiceProvider extends ServiceProvider
 {
-
-
     protected $listen = [
-    // ... other events
+        // ... other events
 
-    UserRegistered::class => [
-        SendEmailVerificationNotification::class,
-    ],
+        UserRegistered::class => [
+            SendEmailVerificationNotification::class,
+        ],
 
-    SocialiteWasCalled::class => [
-        \SocialiteProviders\LinkedIn\LinkedInExtendSocialite::class.'@handel',
-    ],
+        OnboardingStepCompleted::class => [
+            \App\Listeners\LogOnboardingStepCompletion::class,
+        ],
 
+        OnboardingCompleted::class => [
+            \App\Listeners\HandleOnboardingCompletion::class,
+        ],
 
-];
+        SocialiteWasCalled::class => [
+            \SocialiteProviders\LinkedIn\LinkedInExtendSocialite::class.'@handel',
+        ],
 
-
+    ];
 
     public function register(): void
     {
